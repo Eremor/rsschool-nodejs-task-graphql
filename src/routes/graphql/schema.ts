@@ -79,6 +79,18 @@ const CreatePostInput = new GraphQLInputObjectType({
   }
 })
 
+const ChangePostInput = new GraphQLInputObjectType({
+  name: 'ChangePostInput',
+  fields: {
+    title: {
+      type: GraphQLString
+    },
+    content: {
+      type: GraphQLString
+    }
+  }
+})
+
 const ProfileType = new GraphQLObjectType({
   name: 'Profile',
   fields: () => ({
@@ -117,6 +129,21 @@ const CreateProfileInput = new GraphQLInputObjectType({
     },
     memberTypeId: {
       type: new GraphQLNonNull(MemberTypeIdEnum)
+    }
+  }
+})
+
+const ChangeProfileInput = new GraphQLInputObjectType({
+  name: 'ChangeProfileInput',
+  fields: {
+    isMale: {
+      type: GraphQLBoolean
+    },
+    yearOfBirth: {
+      type: GraphQLInt
+    },
+    memberTypeId: {
+      type: MemberTypeIdEnum
     }
   }
 })
@@ -184,6 +211,18 @@ const CreateUserInput = new GraphQLInputObjectType({
   }
 })
 
+const ChangeUserInput = new GraphQLInputObjectType({
+  name: 'ChangeUserInput',
+  fields: {
+    name: {
+      type: GraphQLString
+    },
+    balance: {
+      type: GraphQLFloat
+    }
+  }
+})
+
 const RootQueryType = new GraphQLObjectType({
   name: 'RootQueryType',
   fields: () => ({
@@ -231,18 +270,63 @@ const Mutations = new GraphQLObjectType({
   fields: {
     createUser: {
       type: UserType,
-      args: { dto: { type: new GraphQLNonNull(CreateUserInput) } },
-      resolve: async (_source, { dto }, { prisma }) => prisma.user.create({ data: dto })
+      args: {
+        dto: {
+          type: new GraphQLNonNull(CreateUserInput)
+        }
+      },
+      resolve: async (_source, { dto }, { prisma }) => await prisma.user.create({ data: dto })
+    },
+    deleteUser: {
+      type: GraphQLString,
+      args: {
+        id: {
+          type: new GraphQLNonNull(UUIDType)
+        }
+      },
+      resolve: async (_source, { id }, { prisma }) => await prisma.user.delete({
+        where: { id }
+      })
     },
     createProfile: {
       type: ProfileType,
-      args: { dto: { type: new GraphQLNonNull(CreateProfileInput) } },
-      resolve: async (_source, { dto }, { prisma }) => prisma.profile.create({ data: dto })
+      args: {
+        dto: {
+          type: new GraphQLNonNull(CreateProfileInput)
+        }
+      },
+      resolve: async (_source, { dto }, { prisma }) => await prisma.profile.create({ data: dto })
+    },
+    deleteProfile: {
+      type: GraphQLString,
+      args: {
+        id: {
+          type: new GraphQLNonNull(UUIDType)
+        }
+      },
+      resolve: async (_source, { id }, { prisma }) => await prisma.profile.delete({
+        where: { id }
+      })
     },
     createPost: {
       type: PostType,
-      args: { dto: { type: new GraphQLNonNull(CreatePostInput) } },
-      resolve: async (_source, { dto }, { prisma }) => prisma.post.create({ data: dto })
+      args: {
+        dto: {
+          type: new GraphQLNonNull(CreatePostInput)
+        }
+      },
+      resolve: async (_source, { dto }, { prisma }) => await prisma.post.create({ data: dto })
+    },
+    deletePost: {
+      type: GraphQLString,
+      args: {
+        id: {
+          type: new GraphQLNonNull(UUIDType)
+        }
+      },
+      resolve: async (_source, { id }, { prisma }) => await prisma.post.delete({
+        where: { id }
+      })
     },
     subscribeTo: {
       type: GraphQLString,
@@ -263,7 +347,6 @@ const Mutations = new GraphQLObjectType({
             }
           }
         })
-        return 'Subscribed successfully'
       }
     },
     unsubscribeFrom: {
@@ -285,7 +368,6 @@ const Mutations = new GraphQLObjectType({
             }
           }
         })
-        return 'Unsubscribed successfully'
       }
     }
   }
