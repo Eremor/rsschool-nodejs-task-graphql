@@ -284,9 +284,12 @@ const Mutations = new GraphQLObjectType({
           type: new GraphQLNonNull(UUIDType)
         }
       },
-      resolve: async (_source, { id }, { prisma }) => await prisma.user.delete({
-        where: { id }
-      })
+      resolve: async (_source, { id }, { prisma }) => {
+        await prisma.user.delete({
+          where: { id }
+        })
+        return 'User deleted successfully';
+      }
     },
     changeUser: {
       type: UserType,
@@ -319,9 +322,12 @@ const Mutations = new GraphQLObjectType({
           type: new GraphQLNonNull(UUIDType)
         }
       },
-      resolve: async (_source, { id }, { prisma }) => await prisma.profile.delete({
-        where: { id }
-      })
+      resolve: async (_source, { id }, { prisma }) => {
+        await prisma.profile.delete({
+          where: { id }
+        })
+        return 'Profile deleted successfully';
+      }
     },
     changeProfile: {
       type: ProfileType,
@@ -354,9 +360,12 @@ const Mutations = new GraphQLObjectType({
           type: new GraphQLNonNull(UUIDType)
         }
       },
-      resolve: async (_source, { id }, { prisma }) => await prisma.post.delete({
-        where: { id }
-      })
+      resolve: async (_source, { id }, { prisma }) => {
+        await prisma.post.delete({
+          where: { id }
+        })
+        return 'Post deleted successfully';
+      }
     },
     changePost: {
       type: PostType,
@@ -392,6 +401,7 @@ const Mutations = new GraphQLObjectType({
             }
           }
         })
+        return 'Subscribed successfully';
       }
     },
     unsubscribeFrom: {
@@ -406,13 +416,14 @@ const Mutations = new GraphQLObjectType({
             id: userId
           },
           data: {
-            subscribedToUser: {
+            userSubscribedTo: {
               deleteMany: {
                 authorId
               }
             }
           }
         })
+        return 'Unsubscribed successfully';
       }
     }
   }
