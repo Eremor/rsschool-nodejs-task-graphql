@@ -288,6 +288,21 @@ const Mutations = new GraphQLObjectType({
         where: { id }
       })
     },
+    changeUser: {
+      type: UserType,
+      args: {
+        id: {
+          type: new GraphQLNonNull(UUIDType)
+        },
+        dto: {
+          type: new GraphQLNonNull(ChangeUserInput)
+        }
+      },
+      resolve: async (_source, { id, dto }, { prisma }) => await prisma.user.update({
+        where: { id },
+        data: dto
+      })
+    },
     createProfile: {
       type: ProfileType,
       args: {
@@ -308,6 +323,21 @@ const Mutations = new GraphQLObjectType({
         where: { id }
       })
     },
+    changeProfile: {
+      type: ProfileType,
+      args: {
+        id: {
+          type: new GraphQLNonNull(UUIDType)
+        },
+        dto: {
+          type: new GraphQLNonNull(ChangeProfileInput)
+        }
+      },
+      resolve: async (_source, { id, dto }, { prisma }) => await prisma.profile.update({
+        where: { id },
+        data: dto
+      })
+    },
     createPost: {
       type: PostType,
       args: {
@@ -326,6 +356,21 @@ const Mutations = new GraphQLObjectType({
       },
       resolve: async (_source, { id }, { prisma }) => await prisma.post.delete({
         where: { id }
+      })
+    },
+    changePost: {
+      type: PostType,
+      args: {
+        id: {
+          type: new GraphQLNonNull(UUIDType)
+        },
+        dto: {
+          type: new GraphQLNonNull(ChangePostInput)
+        }
+      },
+      resolve: async (_source, { id, dto }, { prisma }) => await prisma.post.update({
+        where: { id },
+        data: dto
       })
     },
     subscribeTo: {
