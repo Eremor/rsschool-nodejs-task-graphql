@@ -26,7 +26,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
 
         const validationErrors = validate(schema, parsedQuery, [depthLimit(DEPTH_LIMIT_VALUE)])
 
-        if (!!validationErrors) {
+        if (validationErrors.length > 0) {
           return {
             errors: validationErrors.map((err) => ({
               message: err.message

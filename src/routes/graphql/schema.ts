@@ -12,6 +12,7 @@ import {
 } from 'graphql';
 import { MemberTypeId } from '../member-types/schemas.js';
 import { UUIDType } from './types/uuid.js';
+import { Context, Post, Profile, ResolverArgs, User } from './types/types.js';
 
 const MemberTypeIdEnum = new GraphQLEnumType({
   name: 'MemberTypeId',
@@ -40,7 +41,7 @@ const MemberType = new GraphQLObjectType({
   })
 })
 
-const PostType = new GraphQLObjectType({
+const PostType = new GraphQLObjectType<Post, Context>({
   name: 'Post',
   fields: () => ({
     id: {
@@ -91,7 +92,7 @@ const ChangePostInput = new GraphQLInputObjectType({
   }
 })
 
-const ProfileType = new GraphQLObjectType({
+const ProfileType = new GraphQLObjectType<Profile, Context>({
   name: 'Profile',
   fields: () => ({
     id: {
@@ -148,7 +149,7 @@ const ChangeProfileInput = new GraphQLInputObjectType({
   }
 })
 
-const UserType = new GraphQLObjectType({
+const UserType = new GraphQLObjectType<User, Context>({
   name: 'User',
   fields: () => ({
     id: {
@@ -223,7 +224,7 @@ const ChangeUserInput = new GraphQLInputObjectType({
   }
 })
 
-const RootQueryType = new GraphQLObjectType({
+const RootQueryType = new GraphQLObjectType<unknown, Context>({
   name: 'RootQueryType',
   fields: () => ({
     memberTypes: {
@@ -245,27 +246,27 @@ const RootQueryType = new GraphQLObjectType({
     memberType: {
       type: MemberType,
       args: { id: { type: new GraphQLNonNull(MemberTypeIdEnum)} },
-      resolve: async (_source, { id }, { prisma }) => prisma.memberType.findUnique({ where: { id: id as MemberTypeId } })
+      resolve: async (_source, { id }: ResolverArgs<MemberTypeId>, { prisma }) => prisma.memberType.findUnique({ where: { id } })
     },
     post: {
       type: PostType,
       args: { id: { type: new GraphQLNonNull(UUIDType)} },
-      resolve: async (_source, { id }, { prisma }) => prisma.post.findUnique({ where: { id } })
+      resolve: async (_source, { id }: ResolverArgs<string>, { prisma }) => prisma.post.findUnique({ where: { id } })
     },
     user: {
       type: UserType,
       args: { id: { type: new GraphQLNonNull(UUIDType)} },
-      resolve: async (_source, { id }, { prisma }) => prisma.user.findUnique({ where: { id } })
+      resolve: async (_source, { id }: ResolverArgs<string>, { prisma }) => prisma.user.findUnique({ where: { id } })
     },
     profile: {
       type: ProfileType,
       args: { id: { type: new GraphQLNonNull(UUIDType)} },
-      resolve: async (_source, { id }, { prisma }) => prisma.profile.findUnique({ where: { id } })
+      resolve: async (_source, { id }: ResolverArgs<string>, { prisma }) => prisma.profile.findUnique({ where: { id } })
     }
   })
 })
 
-const Mutations = new GraphQLObjectType({
+const Mutations = new GraphQLObjectType<unknown, Context>({
   name: 'Mutations',
   fields: {
     createUser: {
